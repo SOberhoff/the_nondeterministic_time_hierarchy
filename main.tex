@@ -10,9 +10,7 @@
 \usepackage{tikz}
 \usepackage{array}
 \usepackage{epigraph}
-\usepackage{caption}
-\usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
+\usepackage[colorlinks=true, allcolors=., urlcolor=blue]{hyperref}
 
 \usetikzlibrary{decorations.pathmorphing}
 
@@ -23,6 +21,7 @@
 
 \newcommand{\NTIME}{\ensuremath{\textsf{NTIME}}}
 \newcommand{\Poly}{\ensuremath{\textsf{P}}}
+\newcommand{\EXP}{\ensuremath{\textsf{EXP}}}
 \newcommand{\NP}{\ensuremath{\textsf{NP}}}
 \newcommand{\NEXP}{\ensuremath{\textsf{NEXP}}}
 \newcommand{\NEXPEXP}{\ensuremath{\textsf{NEXPEXP}}}
@@ -49,7 +48,7 @@ decorate, decoration={
     post length=2pt
 }] (0,0) -- (#1,0);}\ }
 
-% thick lines in the Bingo sheet
+% thick lines in the Bingo card
 \makeatletter
 \newcommand{\thickhline}{%
     \noalign {\ifnum 0=`}\fi \hrule height 1pt
@@ -65,10 +64,6 @@ decorate, decoration={
 
 \setlist[description]{topsep=1pt, itemsep=1pt, leftmargin=0.5cm}
 \setlist[itemize]{topsep=1pt, itemsep=1pt}
-
-% prevents "then" and "do" clutter in the pseudo code
-\renewcommand\algorithmicthen{}
-\renewcommand\algorithmicdo{}
 
 \begin{document}
 
@@ -122,19 +117,26 @@ $\NP \subsetneq \NEXP$.
 Let's start by contemplating the following problem:
 \begin{mdframed}
 \textsc{NCatch22}$^n$
+
+\noindent
+$
+\hspace{-1pt}
+\left.\parbox{0.4\textwidth}{
 \begin{itemize}[noitemsep,topsep=0.3em]
 \item[$\longrightarrow$] A nondeterministic algorithm $N$.
-\item[$\longrightarrow$] An integer $t$ in unary.
+\item[$\longrightarrow$] An integer $t$ in \textit{unary}.
 \end{itemize}
+}\right\}\;
+\text{$n$ bits in total.}\hspace*{\fill}
+$
 \begin{itemize}[noitemsep,topsep=0.3em]
-\item[$\longleftarrow$] Accept if there's no path of execution such that $N(N, t)$ accepts within $2^n$ steps.\footnotemark\ Reject otherwise.
+\item[$\longleftarrow$] Accept if there's no path of execution such that $N(N, t)$ accepts within $2^n$ steps. Reject otherwise.
 \end{itemize}
 \end{mdframed}
-\footnotetext{As is customary, $n$ is the size of the input.}
 On the one hand, we can solve this problem in deterministic doubly exponential time by just going through all possible lines of execution. This is true even if $N$ varies, not just $t$. Increasing the size of the source code of $N$ isn't \textit{that} catastrophic. So if we give ourselves an expexporbitant budget, we're good. That puts the problem in \textsf{EXPEXP} and thereby in $\NEXPEXP$.
 
 On the other hand, suppose for a moment that we could somehow solve this problem in $f(n) \in o(2^n)$ steps with some nondeterministic algorithm $N^*$. Any such algorithm could be turned back around on itself by asking whether there exists a path of execution such that $N^*(N^*, t)$ accepts within $2^n$ steps. Let $t$ be large enough so that $f(n) \ll 2^n$, then:\\[0.5em]
-\begin{minipage}{0.35\textwidth}
+\begin{minipage}{0.5\textwidth}
 \begin{description}[noitemsep]
 \nameditem{Either there is such a path:} 
 \begin{itemize}[noitemsep]
@@ -160,7 +162,7 @@ Just one small problem. That's one ``\textsf{EXP}" too many. Dang it!
 
 At this point the classical route is to start over and try something cleverer instead: lazy diagonalization.\cite{stanislav} Certainly, that's the way to go if you want to squeeze out the best possible Nondeterministic Time Hierarchy Theorem. But we're not here for elaborately choreographed sword fights. We're here to cleave the polynomial and the exponential apart. So let's just shoot the sucker.
 
-Imagine $\NP = \NEXP$. Then $\NEXP = \NEXPEXP$. How so? \textit{Padding}, that's how. Therefore, by chaining our equalities we get $\NP = \NEXP = \NEXPEXP$. And we know this isn't true. QED.
+Imagine $\NP = \NEXP$. Then $\NEXP = \NEXPEXP$. How so? \textit{Padding}, that's how. Therefore, by chaining our equalities we get $\NP = \NEXP = \NEXPEXP$. And \textit{that} we know isn't true. QED.
 
 All that's left over is to double check the details involved in the padding. For this take any problem in $\NEXPEXP$. Then there exists a nondeterministic algorithm $J$ which can take an $n$ bit input and accept within $2^{2^{n^k}}$ steps for some $k \in \mathbb{N}$, provided the input is a ``yes"-instance. Here's an illustration:
 \[
@@ -170,6 +172,7 @@ If we pad this input, we get a similar problem:
 \[
 \underbrace{\overbrace{\text{\footnotesize Only the penitent man will pass.}}^{n\text{ bits}}\overbrace{\text{\footnotesize BLABLABLABLABLABLABLABLABLABLA...}}^{\text{An entire book}}}_{2^{n^k}\text{ bits}}\overset{2^{2^{n^k}}\text{ nondeterministic steps}}{\longleadsto{4}} \text{\footnotesize He kneels!}
 \]
+
 Since $J$ solves the former in $2^{2^{n^k}}$ steps we can easily modify it to ignore the padding and still solve the latter in $2^{2^{n^k}}$ steps. But this problem now has a size $m = 2^{n^k}$ input. In other words, we can solve the latter problem in $2^m$ steps which now is merely exponential in the size of the input. Therefore, as long as $\NP = \NEXP$, we can also solve the latter problem in $m^l$ steps for some $l\in\mathbb{N}$ using some new algorithm $J'$. And that gives us the following algorithm:
 \begin{enumerate}
 \item Take the $n$ bit input and pad it to length $2^{n^k}$. (And return to the starting position.)
@@ -275,9 +278,9 @@ then
 \[
 \coNP = \interEXP
 \]
-by symmetry. Hence, 
+by symmetry. Hence, using the fact that, if two sets are equal, then their intersection is unchanged, we see
 \[
-\NP = \coNP = \interP\footnote{If two sets are equal, then intersecting them yields the same set again.} = \interEXP.
+\NP = \coNP = \interP = \interEXP.
 \]
 But this is ruled out by the previous theorem. \lightning
 \end{proof}
@@ -307,9 +310,9 @@ by symmetry. Furthermore,
 \[
 \unionEXP = \NEXPEXP
 \]
-by padding. Putting all this together we then get
+by padding. Putting all this together and using the fact that, if two sets are equal, their union is unchanged, we then get
 \[
-\NEXP = \coNEXP = \unionEXP\footnote{Again, if two sets are equal, their union is unchanged.} = \NEXPEXP.
+\NEXP = \coNEXP = \unionEXP = \NEXPEXP.
 \]
 And that contradicts the conclusion of the first exercise. \lightning
 \end{proof}
@@ -354,99 +357,65 @@ Fine, let's use our whip then. Suppose $\unionP = \interEXP$. Then by symmetry w
 
 Indiana: ``Willie! Willie, we're in trouble!"
 
-Things are indeed dire. Padding and symmetry could only bring us so far. We're going to need a new idea. So here's one: If we think back to Theorem VIII where we established $\unionP \subsetneq \NEXP$, there was an alternative proof available. We could've \textit{exhibited} a single problem in $\NEXP$ and shown that this problem is neither in $\NP$ nor $\coNP$. Thereby, it isn't in $\unionP$. What might such a problem be? An $\NEXP$-complete problem of course!\footnote{Let's not worry too much about what kind of reductions we'd allow.} Such a problem is in $\NEXP$ and if it is in either $\NP$ or $\coNP$, then the classes collapse. And that can't happen.
+Things are indeed dire. Padding and symmetry could only bring us so far. We're going to need a new idea. So here's one: If we think back to Theorem VIII where we established $\unionP \subsetneq \NEXP$, there was an alternative proof available. We could've \textit{exhibited} a single problem in $\NEXP$ and shown that this problem is neither in $\NP$ nor $\coNP$. Thereby, it isn't in $\unionP$. What might such a problem be? An $\NEXP$-complete problem of course! Such a problem is in $\NEXP$ and if it is in either $\NP$ or $\coNP$, then the classes collapse. And that can't happen.
 
-Cool. So all we need is an $\interEXP$-complete problem, right? Sure, that would do it. Unfortunately, this is a little tricky. We don't even have $\interP$-complete problems. And believe me people have definitely been looking. But then what hope is there to find an $\interEXP$-complete problem?
+Cool. So all we need is an $\interEXP$-complete problem, right? Sure, that would do it. Unfortunately, this is a little tricky. We don't even have $\interP$-complete problems. And believe me people have definitely been looking. But then what hope is there to find an $\interEXP$-complete problem? The closest we can get is $\EXP$-complete problems. But there we no longer have a separation between $\unionP$ and $\EXP$.
 
 Marion: ``Where are you going?"
 
 Indiana: ``Through that wall."
 
-To overcome this problem let's go back a couple steps to before we thought of using complete problems. All we said at that point is that we need some problem which is neither in $\NP$ nor in $\coNP$. Can we cook up something else that fits this bill? Scanning over the theorems we have so far, the best we can do is to use Theorem VI to produce some problem in $\interEXP$ which isn't in $\NP$. And we can use Theorem VII to produce another which isn't in $\coNP$. But we have no way of knowing if these are the same problem. Can we fix this? Sorta. We're going to have to go between them.
-
-Elsa: ``Go between them? Are you crazy?!"
-
-In 1975 Richard E. Ladner proved a remarkable theorem known today as Ladner's Theorem.\cite{ladner} This theorem establishes that if, as we all expect, $\Poly \subsetneq \NP$, then there are problems in $\NP$ which are neither in $\Poly$ nor $\NP$-complete. They are ``between" $\Poly$ and $\NP$-complete. The way Ladner did this was to argue:
-
-\noindent
-``Suppose $\Poly \subsetneq \NP$. Then give me:
-\begin{itemize}
-\item A problem in $\NP$ that isn't in $\Poly$. Because $\Poly \subsetneq \NP$ any $\NP$-complete problem will do.
-\item A problem in $\NP$ that isn't $\NP$-complete. Because $\Poly \subsetneq \NP$ any problem in $\Poly$ will do.
-\end{itemize}
-Given these two problems you can mash them together like so and produce a new problem that's still in $\NP$ but which is neither in $\Poly$ nor is $\NP$-complete."
-
-Now that sounds like exactly what the doctor ordered. We have a problem in $\interEXP$ that isn't in $\NP$. And we have another that isn't in $\coNP$. Let's mash 'em together!
+To overcome this problem we'll need one last idea. Namely, while we don't know whether $\unionP \subsetneq \EXP$, it's not too hard to see that if they were equal, then $\NP$ and $\coNP$ would merge into the same class. Therefore, $\unionP = \interP$. But that would make our puzzle pieces fit together! Finally, we're ready.
 
 \begin{theorem}
 $\unionP \subsetneq \interEXP$.
 \end{theorem}
 
+Just to be thorough, let's double check that $\EXP$ really has complete problems. Here's the simplest of all:
+
 \begin{proof}
-By Theorems VI and VII we're guaranteed the existence of languages $E$ and $A$ which aren't in $\NP$ and $\coNP$ respectively,\footnote{I chose the letters $E$ and $A$ because they harken back to the definitions of $\NP$ and $\coNP$ that use $\exists$ and $\forall$ quantifiers. The fact that they're reversed compared to the quantifiers can be used as a reminder that $E$ is \textit{not} in $\NP$ and $A$ is \textit{not} in $\coNP$.} yet which are in $\interEXP$. Now consider the language $\AE$ defined as follows:
+\begin{mdframed}
+\textsc{Exp-Predict}
+\begin{itemize}[noitemsep,topsep=0.3em]
+\item[$\longrightarrow$] An algorithm $A$.
+\item[$\longrightarrow$] An input $x$.
+\item[$\longrightarrow$] An integer $t$ given in \textit{binary}.
+\end{itemize}
+\begin{itemize}[noitemsep,topsep=0.3em]
+\item[$\longleftarrow$] Accept if $A(x)$ accepts within $t$ steps. Reject otherwise.
+\end{itemize}
+\end{mdframed}
+Any problem in $\EXP$ can easily be reduced to this one in polynomial time by just writing down the fixed size exponential time algorithm, the input under current consideration, and the maximum running time required. Thus, if this problem lies in, say, $\NP$, then all of $\EXP$ follows.
+
+Now for the actual argument. Suppose
 \[
-\AE(x) =
-\begin{cases}
-E(x) & \text{if $f(|x|)$ is even}\\
-A(x) & \text{if $f(|x|)$ is odd.}\\
-\end{cases}
+\unionP = \interEXP.
 \]
-where $f$ is defined as:
-\begin{algorithm}[H]
-\caption*{$f(n)$}
-\begin{algorithmic}
-\If{$n = 0$}
-  \State \Return{$0$}
-\EndIf
-\If{$f(n-1) = 2i$ for some $i \in \mathbb{N}$}
-  \While{$n$ steps have not yet elapsed}
-    \For{$x \in$ all possible strings}
-      \If{$\AE(x) \subsetneq N_i(x)$ \textbf{or} $N_i(x)$ takes too long on a ``yes"-instance}
-        \State \Return{$f(n-1)+1$}
-      \EndIf
-    \EndFor
-  \EndWhile
-  \State \Return{$f(n-1)$}
-\EndIf
-\If{$f(n-1) = 2i+1$ for some $i \in \mathbb{N}$}
-  \While{$n$ steps have not yet elapsed}
-    \For{$x \in$ all possible strings}
-      \If{$\AE(x) \subsetneq N_i(x)$ \textbf{or} $N_i(x)$ takes too long on a ``no"-instance}
-        \State \Return{$f(n-1)+1$}
-      \EndIf
-    \EndFor
-  \EndWhile
-  \State \Return{$f(n-1)$}
-\EndIf
-\end{algorithmic}
-\end{algorithm}
-\noindent
-This code warrants some comments.
-\begin{description}
-\nameditem{What's going on with these while-statements?} These statements run the nested code for the specified amount of time. If it returns by then, fine. But if it doesn't, it is aborted and the following \textbf{return}-statement on the same level is executed. This hard time limit assures that $f$ can be computed in roughly $T(n) = T(n-1) + n$ steps for some function $T$. That's a mere quadratic amount; very manageable.\footnote{I'm sweeping the issue of keeping track of time under the rug. It should be clear though that this doesn't endanger our polynomial budget. (In fact, since we're not operating under Ladner's constraints, we even have an exponential budget.)}
-\begin{description}
-\nameditem{What's happening \textit{inside} these while-blocks?} Let's just take the first of these. Here we're taking the $i$'th polynomial time nondeterministic algorithm ($N_i$) and checking it against $\AE$. We could try to speed this up by using nondeterminism ourselves. But as it turns out we don't need to. So we're free to assume that everything here is brute forced in deterministic fashion. What we're doing here is we're looking to disprove the assertion that $\AE$ is in $\NP$ by looking for counterexamples ruling out every possible $N_i$. That just leaves two subtle subproblems.
-\begin{description}
-\nameditem{How can we figure out \AE$(x)$ if \AE\ is defined in terms of $f$ again? Isn't this circular?} Not quite. What saves us is that in order to determine the relevant values of $\AE(x)$ we only need to know $f$ for much smaller values. Remember that we only run this loop for $n$ steps. At that point we can only have reached $x$'s of at most logarithmic size. This in turn only demands $\AE$ and thereby $f$ to be defined up to logarithmic size. So, as long as we operate recursively---and we already do for $f(n-1)$---we're in the clear.
-\nameditem{How do we actually make a list of all the \textit{polynomial time} nondeterministic algorithms?} This sounds like a formidable task. And it is. But luckily there's a way to sidestep it. We simply have to demand that each $N_i$ comes with a header which declares its running time. All we have to do then is check the header and make sure that $N_i$ doesn't overstep its bounds. If it does, we increment $f$ and move on. As we'll see this measure is fully sufficient.
-\end{description}
-\end{description}
-\end{description}
-With all that out of the way we're now ready for the key questions.
-\begin{description}
-\nameditem{Is \AE\ in $\interEXP$?} Both $E$ and $A$ are. So, for example, we can accept ``yes"-instances in $\NEXP$ time by first computing $f(|x|)$---that takes a mere polynomial amount---and then jumping to the appropriate $\NEXP$ algorithm depending on whether $f(|x|)$ is even or odd. The same is true for ``no"-instances. \checkmark
-\nameditem{And finally, is \AE\ in either $\NP$ or $\coNP$?} Let's assume that it is. Then, without loss of generality, let $N^*$ be the ``first" algorithm affirming this assumption by placing $\AE$ in $\NP$. This would mean that, as we consider larger and larger inputs, $f$ discards every nondeterministic algorithm until it eventually reaches $N^*$. At that point it gets stuck. Because $N^*$ answers correctly to every input, and does so for the ``yes"-instances within a polynomial time limit, $f$ will never grow to the next higher number. Hence, $f$ is even for all but a finite number of inputs. Hence, $\AE$ is equal to $E$ for all but a finite number of strings. Hence, by solving $\AE$, $N^*$ solves $E$ on all but a finite number of inputs; placing $E$ in $\NP$. Hence, $N^*$ couldn't have existed after all. \lightning
-\end{description}
+Then because $\EXP$ is sandwiched between these classes we also have
+\[
+\unionP = \EXP.
+\]
+So take any $\EXP$-complete problem. According to the equality above, this problem must be in either $\NP$ or $\coNP$. Let's assume without loss of generality that it is in $\NP$. Then $\NP$ and $\EXP$ collapse to the same class. And by symmetry the same happens with $\coNP$. Hence,
+\[
+\NP = \EXP = \coNP.
+\]
+Consequently,
+\[
+\interP = \unionP = \interEXP.
+\]
+But this flies in the face of Theorem V. \lightning
 \end{proof}
 
-Indiana: ``X marks the spot... Bingo."\footnote{Finally, the purpose of the Roman numerals is revealed.}
+Indiana: ``X marks the spot... Bingo."
 
-\begin{thebibliography}{2}
+\begin{thebibliography}{1}
 \bibitem{stanislav}
 Žák Stanislav (1983), \textit{A Turing machine time hierarchy, Theoretical Computer Science, Elsevier Science B.V. 26}
-\bibitem{ladner}
-Richard E. Ladner (1975), \textit{On the Structure of Polynomial Time Reducibility, Journal of the ACM}
 \end{thebibliography}
+
+\section*{Closing Credits}
+
+I originally nuked Theorem X with a variation of Ladner's Theorem. It can still be found at \url{https://github.com/SOberhoff/the_nondeterministic_time_hierarchy/releases/tag/v1.0}. The simpler proof given here was pointed out to me by Scott Aaronson.
 
 \vfill\eject
 
