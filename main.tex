@@ -20,6 +20,7 @@
 \newcommand{\impl}{\item[$\Rightarrow$]}
 
 \newcommand{\NTIME}{\ensuremath{\textsf{NTIME}}}
+\newcommand{\coNTIME}{\ensuremath{\textsf{coNTIME}}}
 \newcommand{\Poly}{\ensuremath{\textsf{P}}}
 \newcommand{\EXP}{\ensuremath{\textsf{EXP}}}
 \newcommand{\NP}{\ensuremath{\textsf{NP}}}
@@ -416,6 +417,20 @@ Indiana: ``X marks the spot... Bingo."
 \section*{Closing Credits}
 
 I originally nuked Theorem X with a variation of Ladner's Theorem. It can still be found at \url{https://github.com/SOberhoff/the_nondeterministic_time_hierarchy/releases/tag/v1.0}. The simpler proof given here was pointed out to me by Scott Aaronson.
+
+\section*{Post Credits Scene}
+
+One can carry out a number of these arguments at a higher level of resolution. For instance, the strong Nondeterministic Hierarchy Theorem shows $\NTIME(n) \subsetneq \NTIME\left(n^2\right)$. Hence, $\coNTIME(n) \subsetneq \coNTIME\left(n^2\right)$ by symmetry. And further $\NTIME(n) \neq \coNTIME\left(n^2\right)$ by the same argument as in Theorem III. But note that this is no longer a strict containment. And indeed it seems likely that $\NTIME(n)$ also contains something that's not in $\coNTIME\left(n^2\right)$. But it's when we get to the center that things get really hairy. We can use repeated padding to show that if
+\[
+\NTIME(n) \cap \coNTIME(n) = \NTIME\left(n^2\right) \cap \coNTIME\left(n^2\right),
+\]
+then
+\[
+\NTIME(n) \cap \coNTIME(n) = \NTIME\left(n^\text{googolplex}\right) \cap \coNTIME\left(n^\text{googolplex}\right).
+\]
+A rather dubious proposition to say the least. But our proof for Theorem V no longer works here. There was brute force involved at one point. And that's no longer available to us if we want to stay within the range of polynomials.
+
+Finally, a perhaps even more basic consideration: By Theorem X we know that there exist problems in $\interEXP$ that aren't in $\unionP$. So then where are they? Can we actually point out a concrete problem which separates these classes the way we can in the case of $\NP \subsetneq \NEXP$?
 
 \vfill\eject
 
